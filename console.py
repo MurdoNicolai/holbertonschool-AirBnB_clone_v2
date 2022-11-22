@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[- 1] is'}'\
+                    if pline[0] is '{' and pline[ - 1] is'}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -113,15 +113,52 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, argument):
         """ Create an object of any class"""
-        if not args:
+
+        args = argument.split(' ')
+
+        if not args[0]:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+
+        first_arg = 1
+        for parameter in args:
+            if first_arg:
+                new_instance = HBNBCommand.classes[parameter]()
+                first_arg = 0
+            else:
+                param_list = parameter.split("=")
+                value = list(param_list[1])
+
+                if value[0] != "\"":
+                    try:
+                        param_list[1] = float(param_list[1])
+                        if param_list[1] % 1 == 0:
+                            param_list[1] = int(param_list[1])
+                    except:
+                        continue
+                else:
+                    value = value[1:]
+                    i = 0
+                    while i < len(value):
+                        if value[i] == "\"":
+                            if value[i - 1] == "\\":
+                                for j in range(i - 1, len(value) -1):
+                                    value[j] = value[j + 1]
+                            else:
+                                value = value[:i]
+                                continue
+                        if value[i] == "_":
+                            value[i] = " "
+                        i += 1
+                    param_list[1] = ''.join(value)
+                setattr(new_instance, param_list[0], param_list[1])
+
+
         storage.save()
         print(new_instance.id)
         storage.save()
