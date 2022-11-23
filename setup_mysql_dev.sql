@@ -1,15 +1,17 @@
 -- a script that prepares a MySQL server for the project
-CREATE DATABASE IF NOT EXISTS hbnb_dev_deb
-CREATE USER
 
+CREATE DATABASE IF NOT EXISTS hbnb_dev_deb;
+
+CREATE USER
 IF NOT EXISTS 'hbnb_dev'@'localhost'
-IDENTIFIED BY 'hbnb_dev_pwd'
+IDENTIFIED BY 'hbnb_dev_pwd';
+
 GRANT ALL PRIVILEGES
-ON 'hbnb_dev_db'.*
-TO 'hbnb_dev'@'localhost'
-IDENTIFEID BY 'hbnb_dev_pwd'
+ON hbnb_dev_db.*
+TO 'hbnb_dev'@'localhost';
+
 GRANT SELECT
-ON 'hbnb_dev_db'.*
-TO 'hbnb_dev'@'localhost'
-IDENTIFIED BY 'hbnh_dev_db_pwd'
-FLUSH PRIVILEGES
+ON performance_schema.*
+TO 'hbnb_dev'@'localhost';
+
+FLUSH PRIVILEGES;
