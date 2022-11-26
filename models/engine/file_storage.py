@@ -21,7 +21,8 @@ class FileStorage:
 
     def delete(self, obj=None):
         """delete object"""
-        obj= f"{obj.__class__.__name__}.{obj.id}"
+        if obj:
+            obj= f"{obj.__class__.__name__}.{obj.id}"
         if obj in self.__objects:
             del self.__objects[obj]
         else:
