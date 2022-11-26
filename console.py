@@ -158,8 +158,8 @@ class HBNBCommand(cmd.Cmd):
                         i += 1
                     param_list[1] = ''.join(value)
                 setattr(new_instance, param_list[0], param_list[1])
-            storage.new(new_instance)
 
+        storage.new(new_instance)
         storage.save()
         print(new_instance.id)
         storage.save()
