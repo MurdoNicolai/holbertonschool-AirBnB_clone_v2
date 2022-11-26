@@ -3,8 +3,15 @@
 from models.base_model import BaseModel, Base
 from models.city import City
 from models.user import User
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
+
+class Place_amenity(Base):
+    __tablename__ = 'place_amenity'
+    place_id = Column(ForeignKey('places.id'), primary_key=True)
+    amenity_id = Column(ForeignKey('amenities.id'), primary_key=True)
+    amenity = relationship("Amenity", back_populates="places")
+    place = relationship("Place", back_populates="amenities")
 
 
 class Place(BaseModel, Base):
@@ -31,6 +38,8 @@ class Place(BaseModel, Base):
 
     city = relationship("City", back_populates="places")
     user = relationship("User", back_populates="places")
+    amenities = relationship("Place_amenity", back_populates="place")
+
 
 City.places = relationship(
     "Place", order_by=Place.id, back_populates="city")
