@@ -6,13 +6,10 @@ from models.user import User
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
 
-class Place_amenity(Base):
-    __tablename__ = 'place_amenity'
-    place_id = Column(ForeignKey('places.id'), primary_key=True)
-    amenity_id = Column(ForeignKey('amenities.id'), primary_key=True)
-    amenity = relationship("Amenity", back_populates="places")
-    place = relationship("Place", back_populates="amenities")
-
+association_table = Table('place_amenity', Base.metadata,
+    Column('place_id', ForeignKey('places.id')),
+    Column('amenity_id', ForeignKey('amenities.id'))
+)
 
 class Place(BaseModel, Base):
     """
@@ -38,7 +35,7 @@ class Place(BaseModel, Base):
 
     city = relationship("City", back_populates="places")
     user = relationship("User", back_populates="places")
-    amenities = relationship("Place_amenity", back_populates="place")
+    amenities = relationship("Amenity",secondary=association_table, back_populates="places")
 
 
 City.places = relationship(

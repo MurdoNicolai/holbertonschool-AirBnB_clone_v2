@@ -66,3 +66,17 @@ class FileStorage:
                     self.all()[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
+
+        @property
+        def amenities(self):
+            list = ()
+            for amenity in self.amenity_ids:
+                list.append(amenity)
+            return self._age
+
+        @age.setter
+        def age(self, a):
+            if(a < 18):
+                raise ValueError("Sorry you age is below eligibility criteria")
+            print("setter method called")
+            self._age = a
