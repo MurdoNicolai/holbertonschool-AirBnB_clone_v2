@@ -1,6 +1,20 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+from models.base_model import BaseModel
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
+
+
+classes = {
+        'BaseModel': BaseModel, 'User': User, 'Place': Place,
+        'State': State, 'City': City, 'Amenity': Amenity,
+        'Review': Review
+         }
 
 
 class FileStorage:
@@ -8,27 +22,18 @@ class FileStorage:
     __file_path = 'file.json'
     __objects = {}
 
-    def __init__(self):
-        self.__objects={}
-
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
-        if (cls is None):
-            return(self.__objects)
-        search_dict = {}
-        for key in self.__objects:
-            if type(self.__objects[key]) == cls:
-                search_dict[key] = self.__objects[key]
-        return (search_dict)
-
-    def delete(self, obj=None):
-        """delete object"""
-        if obj:
-            obj= f"{obj.__class__.__name__}.{obj.id}"
-        if obj in self.__objects:
-            del self.__objects[obj]
-        else:
-            pass
+        dict = {}
+        if cls:
+            # with .items, use the key and value
+            for key, val in self.__objects.items():
+                # returns the list of objects of one type of class
+                if cls is type(val):
+                    # attribute the value to the key
+                    dict[key] = val
+            return dict
+        return self.__objects
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -36,28 +41,15 @@ class FileStorage:
 
     def save(self):
         """Saves storage dictionary to file"""
-        with open(self.__file_path, 'w') as f:
+        with open(FileStorage.__file_path, 'w') as f:
             temp = {}
-            temp.update(self.__objects)
+            temp.update(FileStorage.__objects)
             for key, val in temp.items():
                 temp[key] = val.to_dict()
             json.dump(temp, f)
 
     def reload(self):
         """Loads storage dictionary from file"""
-        from models.base_model import BaseModel
-        from models.user import User
-        from models.place import Place
-        from models.state import State
-        from models.city import City
-        from models.amenity import Amenity
-        from models.review import Review
-
-        classes = {
-                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
-                    'State': State, 'City': City, 'Amenity': Amenity,
-                    'Review': Review
-                  }
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
@@ -67,16 +59,16 @@ class FileStorage:
         except FileNotFoundError:
             pass
 
-        @property
-        def amenities(self):
-            list = ()
-            for amenity in self.amenity_ids:
-                list.append(amenity)
-            return self._age
+    def delete(self, obj=None):
+        """delete obj from __objects if it's inside - if obj is = to None"""
+        if obj is not None:
+            # define the key
+            key = obj.__class__.__name__ + '.' + obj.id
+            # if there is a key, delete it
+            if self.__objects[key]:
+                del self.__objects[key]
+                self.save()
 
-        @age.setter
-        def age(self, a):
-            if(a < 18):
-                raise ValueError("Sorry you age is below eligibility criteria")
-            print("setter method called")
-            self._age = a
+    def close(self):
+        """ close"""
+        self.reload()
